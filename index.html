@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks Event Schedule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 30px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-container input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .schedule-item {
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .schedule-item.break {
+            background-color: #f0ad4e;
+            color: white;
+            font-weight: bold;
+            justify-content: center;
+            text-align: center;
+        }
+        .time {
+            font-weight: bold;
+            color: #0056b3;
+            flex: 0 0 100px;
+            margin-right: 20px;
+        }
+        .break .time {
+            color: white;
+        }
+        .talk-details {
+            flex-grow: 1;
+        }
+        .talk-details h2 {
+            margin-top: 0;
+            color: #0056b3;
+            font-size: 1.3em;
+        }
+        .talk-details h3 {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .talk-details p {
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+        .categories span {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tech Talks Event Schedule</h1>
+
+        <div class="search-container">
+            <input type="text" id="categorySearch" placeholder="Search by category (e.g., JavaScript, AI)">
+        </div>
+
+        <div id="schedule">
+            <!-- Schedule items will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const talksData = [
+            {
+                "title": "Introduction to AI in Web Development",
+                "speakers": ["Alice Johnson"],
+                "category": ["AI", "Web Development", "Frontend"],
+                "duration": 60,
+                "description": "An overview of how artificial intelligence is changing the landscape of web development, from smart UIs to backend optimizations."
+            },
+            {
+                "title": "Modern JavaScript Features for Productivity",
+                "speakers": ["Bob Smith", "Carol White"],
+                "category": ["JavaScript", "Frontend", "Productivity"],
+                "duration": 60,
+                "description": "Dive into the latest ECMAScript features and how to leverage them for more efficient and readable JavaScript code."
+            },
+            {
+                "title": "Securing Your Node.js Applications",
+                "speakers": ["David Green"],
+                "category": ["Node.js", "Backend", "Security"],
+                "duration": 60,
+                "description": "Best practices and common pitfalls to avoid when building secure applications with Node.js."
+            },
+            {
+                "title": "Cloud Native Architectures with Kubernetes",
+                "speakers": ["Eve Black"],
+                "category": ["Cloud", "DevOps", "Backend"],
+                "duration": 60,
+                "description": "Exploring scalable and resilient application deployment using Kubernetes in a cloud-native environment."
+            },
+            {
+                "title": "Interactive Data Visualization with D3.js",
+                "speakers": ["Frank Blue"],
+                "category": ["Data Visualization", "Frontend", "JavaScript"],
+                "duration": 60,
+                "description": "Learn to create stunning and interactive data visualizations using the powerful D3.js library."
+            },
+            {
+                "title": "Testing Strategies for Microservices",
+                "speakers": ["Grace Red", "Harry Yellow"],
+                "category": ["Testing", "Microservices", "DevOps"],
+                "duration": 60,
+                "description": "Effective strategies and tools for testing microservice-based applications to ensure reliability and maintainability."
+            }
+        ];
+
+        const scheduleContainer = document.getElementById('schedule');
+        const categorySearchInput = document.getElementById('categorySearch');
+
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function renderSchedule(filterCategory = '') {
+            scheduleContainer.innerHTML = ''; // Clear previous schedule
+
+            let currentTime = new Date();
+            currentTime.setHours(10, 0, 0, 0); // Event starts at 10:00 AM
+
+            let talksRendered = 0;
+            const totalTalks = talksData.length;
+
+            for (let i = 0; i < totalTalks; i++) {
+                const talk = talksData[i];
+
+                // Check if talk matches filter
+                const matchesFilter = filterCategory === '' ||
+                                      talk.category.some(cat => cat.toLowerCase().includes(filterCategory.toLowerCase()));
+
+                // Add talk if it matches filter or if no filter is applied
+                if (matchesFilter) {
+                    const talkStartTime = new Date(currentTime);
+                    const talkEndTime = new Date(talkStartTime.getTime() + talk.duration * 60 * 1000);
+
+                    const talkElement = document.createElement('div');
+                    talkElement.classList.add('schedule-item');
+                    talkElement.innerHTML = `
+                        <div class="time">${formatTime(talkStartTime)} - ${formatTime(talkEndTime)}</div>
+                        <div class="talk-details">
+                            <h2>${talk.title}</h2>
+                            <h3>Speaker(s): ${talk.speakers.join(', ')}</h3>
+                            <p>${talk.description}</p>
+                            <div class="categories">
+                                ${talk.category.map(cat => `<span>${cat}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                    scheduleContainer.appendChild(talkElement);
+                    talksRendered++;
+                }
+
+                currentTime = new Date(currentTime.getTime() + talk.duration * 60 * 1000); // Add talk duration
+
+                // Add lunch break after 3rd talk
+                if (i === 2 && talksRendered > 0) { // Ensure lunch is placed after the 3rd displayed talk
+                    const lunchStartTime = new Date(currentTime);
+                    const lunchEndTime = new Date(lunchStartTime.getTime() + 60 * 60 * 1000); // 1 hour lunch
+                    const lunchElement = document.createElement('div');
+                    lunchElement.classList.add('schedule-item', 'break');
+                    lunchElement.innerHTML = `
+                        <div class="time">${formatTime(lunchStartTime)} - ${formatTime(lunchEndTime)}</div>
+                        <div>LUNCH BREAK</div>
+                    `;
+                    scheduleContainer.appendChild(lunchElement);
+                    currentTime = new Date(lunchEndTime); // Update current time after lunch
+                }
+
+                // Add 10-minute transition, except after the last talk
+                if (i < totalTalks - 1) {
+                    currentTime = new Date(currentTime.getTime() + 10 * 60 * 1000); // Add 10 minutes transition
+                }
+            }
+
+            if (talksRendered === 0 && filterCategory !== '') {
+                scheduleContainer.innerHTML = '<p style="text-align: center;">No talks found for this category.</p>';
+            }
+        }
+
+        categorySearchInput.addEventListener('keyup', (event) => {
+            renderSchedule(event.target.value.trim());
+        });
+
+        // Initial render
+        renderSchedule();
+    </script>
+</body>
+</html>
