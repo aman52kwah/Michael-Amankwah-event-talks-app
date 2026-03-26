@@ -1,0 +1,10 @@
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+
+# Temporary files
+*.log
+*.tmp
